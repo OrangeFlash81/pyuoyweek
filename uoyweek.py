@@ -20,6 +20,8 @@ class Period:
     def __str__(self):
         return "{} \"{}\" at {}".format(self.__class__.__name__, self.name, self.start)
 
+    def __repr__(self): return self.__str__()
+
 class Term(Period):
     def __init__(self, date: date, name: str):
         date = date - timedelta(days=date.weekday())
@@ -41,6 +43,7 @@ class Holiday(Period):
         return result.lower() if lowerC else result
 
 dates = sorted([
+    Term(date(2018,9,24),"Autumn"),
     Holiday(date(2018,11,30),"Christmas"),
     Term(date(2019,1,7),"Spring"),
     Holiday(date(2019,3,15), "Easter"),
