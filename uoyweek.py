@@ -27,8 +27,11 @@ class Term(Period):
         date = date - timedelta(days=date.weekday())
         Period.__init__(self, date, name)
 
+    def getWeekNum(self, today: date):
+        return (today - self.start).days // 7 + 1
+
     def toString(self, today: date, short=False, lowerC=False):
-        weeknum = (today - self.start).days // 7 + 1
+        weeknum = self.getWeekNum(today)
         t = self.name[:3] if short else self.name
         d = day_abbr[today.weekday()] if short else day_name[today.weekday()]
         result = "{}/{}/{}".format(t, weeknum, d)
