@@ -4,8 +4,10 @@ from datetime import date, timedelta
 from calendar import day_name, day_abbr
 from argparse import ArgumentParser
 
-def main(short=False, lower=False):
-    print(getTerm(date.today()).toString(date.today(),short=short, lowerC=lower))
+def main(short=False, lower=False, termOnly=False):
+    message = getTerm(date.today()).toString(date.today(), short=short, lowerC=lower, termOnly=termOnly)
+    if message != "":
+        print(message)
 
 class Period:
     def __init__(self, date: date, name: str):
@@ -30,7 +32,7 @@ class Term(Period):
     def getWeekNum(self, today: date):
         return (today - self.start).days // 7 + 1
 
-    def toString(self, today: date, short=False, lowerC=False):
+    def toString(self, today: date, short=False, lowerC=False, termOnly=False):
         weeknum = self.getWeekNum(today)
         t = self.name[:3] if short else self.name
         d = day_abbr[today.weekday()] if short else day_name[today.weekday()]
@@ -41,7 +43,9 @@ class Holiday(Period):
     def __init__(self, date: date, name: str):
         Period.__init__(self, date, name)
 
-    def toString(self, today: date, short=False, lowerC=False):
+    def toString(self, today: date, short=False, lowerC=False, termOnly=False):
+        if termOnly:
+            return ""
         result = self.name + ("" if short else " Holidays")
         return result.lower() if lowerC else result
 
@@ -90,5 +94,6 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-s", "--short", help="Prints a shortened version of the date, abbreviating the term and day.", action="store_true")
     parser.add_argument("-l", "--lower", help="Converts to lowercase.", action="store_true")
+    parser.add_argument("-t", "--term-only", help="Prints nothing if it is currently a holiday, instead of the holiday name.", dest="termOnly", action="store_true")
     args = parser.parse_args()
     main(**vars(args))
